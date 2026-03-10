@@ -1,7 +1,12 @@
-import "dotenv/config"
+import "dotenv/config";
+import { defineConfig, env } from "prisma/config";
 
-export default {
+export default defineConfig({
+  schema: "prisma/schema.prisma",
+  migrations: {
+    path: "prisma/migrations",
+  },
   datasource: {
-    url: "postgresql://dining_projects_user:RmFLVKn9er8kLoQ3FEThZfOcfrK1ZDks@dpg-d6nar4nkijhs73aa6mrg-a.oregon-postgres.render.com/dining_projects?ssl=true"
-  }
-}
+    url: env("DATABASE_URL"),
+  },
+});
