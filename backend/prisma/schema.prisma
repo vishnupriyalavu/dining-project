@@ -16,12 +16,12 @@ model User {
   orders Order[]
 }
 
-model Product {
+model Food {
   id          String   @id @default(uuid())
   name        String
   description String
   price       Float
-  image       String?
+  image       String
   cartitems    CartItem[]
   orderItems   OrderItem[]
   createdAt   DateTime @default(now())
@@ -34,7 +34,7 @@ model CartItem {
   quantity  Int
 
   user    User    @relation(fields: [userId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
+  product Food @relation(fields: [productId], references: [id])
 }
 
 model Order {
@@ -55,5 +55,5 @@ model OrderItem {
   price     Float
 
   order   Order   @relation(fields: [orderId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
+  product Food @relation(fields: [productId], references: [id])
 }
