@@ -22,6 +22,7 @@ model Food {
   description String
   price       Float
   image       String
+  featured    Boolean  @default(false)
   cartitems    CartItem[]
   orderItems   OrderItem[]
   createdAt   DateTime @default(now())

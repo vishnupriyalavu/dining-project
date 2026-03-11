@@ -57,3 +57,21 @@ export const searchFood = async (req: Request, res: Response) => {
     })
   }
 }
+export const getFeaturedFoods = async (req: Request, res: Response) => {
+
+  try {
+
+    const foods = await prisma.food.findMany({
+      where: {
+        featured: true
+      }
+    })
+
+    res.json(foods)
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch featured foods"
+    })
+  }
+}

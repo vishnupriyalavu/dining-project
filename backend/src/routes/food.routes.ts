@@ -2,7 +2,8 @@ import { Router } from "express"
 import {
   getFoods,
   getFoodById,
-  searchFood
+  searchFood,
+  getFeaturedFoods
 } from "../controllers/food.controller"
 
 const router = Router()
@@ -10,5 +11,6 @@ const router = Router()
 router.get("/", getFoods)
 router.get("/search", searchFood)
 router.get("/:id", getFoodById)
+router.get("/featured", getFeaturedFoods)
 
 export default router
