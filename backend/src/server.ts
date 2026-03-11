@@ -3,6 +3,7 @@ import cors from "cors"
 import dotenv from "dotenv"
 import authRoutes from "./routes/auth.routes"
 import foodRoutes from "./routes/food.routes"
+import cartRoutes from "./routes/cart.routes"
 
 dotenv.config()
 
@@ -15,6 +16,7 @@ app.use(express.json())
 // Routes
 app.use("/auth", authRoutes)
 app.use("/foods", foodRoutes)
+app.use("/cart", cartRoutes)
 
 const PORT = process.env.PORT || 5000
 
