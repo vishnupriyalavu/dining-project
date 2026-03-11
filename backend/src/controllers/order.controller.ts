@@ -10,7 +10,7 @@ export const createOrder = async (req: Request, res: Response) => {
 
     const cartItems = await prisma.cartItem.findMany({
       where: { userId },
-      include: { product: true }
+      include: { food: true }
     })
 
     if (cartItems.length === 0) {
@@ -21,12 +21,12 @@ export const createOrder = async (req: Request, res: Response) => {
 
     const orderItems = cartItems.map(item => {
 
-      total += item.product.price * item.quantity
+      total += item.food.price * item.quantity
 
       return {
         productId: item.productId,
         quantity: item.quantity,
-        price: item.product.price
+        price: item.food.price
       }
     })
 
