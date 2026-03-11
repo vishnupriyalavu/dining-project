@@ -30,11 +30,11 @@ model Food {
 model CartItem {
   id        String  @id @default(uuid())
   userId    String
-  productId String
+  productId    String
   quantity  Int
 
   user    User    @relation(fields: [userId], references: [id])
-  product Food @relation(fields: [productId], references: [id])
+  food    Food @relation(fields: [productId], references: [id])
 }
 
 model Order {

@@ -7,13 +7,13 @@ async function main() {
     {
       name: "Margherita Pizza",
       description: "Classic Italian pizza with tomato sauce, mozzarella cheese, and fresh basil.",
-      price: 250,
+      price: 2500,
       image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38"
     },
     {
       name: "Pepperoni Pizza",
       description: "Delicious pizza topped with spicy pepperoni slices and melted mozzarella cheese.",
-      price: 320,
+      price: 3200,
       image: "https://images.unsplash.com/photo-1601924582975-7e0c9e29e9f4"
     },
     {
@@ -37,13 +37,13 @@ async function main() {
     {
       name: "Pasta Alfredo",
       description: "Creamy Alfredo pasta made with parmesan cheese and rich garlic cream sauce.",
-      price: 280,
+      price: 2800,
       image: "https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5"
     },
     {
       name: "Grilled Chicken",
       description: "Tender grilled chicken served with herbs, spices, and roasted vegetables.",
-      price: 350,
+      price: 3500,
       image: "https://images.unsplash.com/photo-1600891964599-f61ba0e24092"
     },
     {
