@@ -8,6 +8,7 @@ export const createOrder = async (req: Request, res: Response) => {
 
   try {
 
+    // get user's cart
     const cartItems = await prisma.cartItem.findMany({
       where: { userId },
       include: { food: true }
@@ -30,6 +31,7 @@ export const createOrder = async (req: Request, res: Response) => {
       }
     })
 
+    // create order
     const order = await prisma.order.create({
       data: {
         userId,
@@ -43,14 +45,18 @@ export const createOrder = async (req: Request, res: Response) => {
       }
     })
 
-    // clear cart after checkout
+    // clear cart after order
     await prisma.cartItem.deleteMany({
       where: { userId }
     })
 
-    res.status(201).json(order)
+    res.status(201).json({
+      message: "Order placed successfully",
+      order
+    })
 
   } catch (error) {
+    console.error("Order creation error:", error)
     res.status(500).json({ message: "Checkout failed" })
   }
 }
@@ -77,9 +83,13 @@ export const getOrders = async (req: Request, res: Response) => {
       }
     })
 
-    res.json(orders)
+    res.json({
+      message: "Orders fetched successfully",
+      orders
+    })
 
   } catch (error) {
+    console.error("Fetch orders error:", error)
     res.status(500).json({ message: "Failed to fetch orders" })
   }
 }

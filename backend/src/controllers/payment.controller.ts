@@ -2,9 +2,11 @@ import { Request, Response } from "express"
 import Stripe from "stripe"
 import { prisma } from "../config/prisma"
 
-const stripe = new Stripe(process.env.SECRET_KEY as string)
-
 export const createCheckoutSession = async (req: Request, res: Response) => {
+
+  const stripe = new Stripe(process.env.SECRET_KEY as string, {
+
+  })
 
   const userId = (req as any).userId
 
@@ -21,7 +23,7 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
         product_data: {
           name: item.food.name
         },
-        unit_amount: item.food.price * 100
+        unit_amount: Math.round(item.food.price * 100)
       },
       quantity: item.quantity
     }))
@@ -37,6 +39,7 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
     res.json({ url: session.url })
 
   } catch (error) {
+    console.error(error)
     res.status(500).json({ message: "Payment failed" })
   }
 }
