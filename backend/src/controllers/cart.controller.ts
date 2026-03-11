@@ -74,7 +74,7 @@ export const getCart = async (req: AuthRequest, res: Response) => {
     const cartItems = await prisma.cartItem.findMany({
       where: { userId },
       include: {
-        food: true
+        product: true
       }
     })
 
