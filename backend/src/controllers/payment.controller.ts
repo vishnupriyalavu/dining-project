@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import Stripe from "stripe"
 import { prisma } from "../config/prisma"
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
+const stripe = new Stripe(process.env.SECRET_KEY as string)
 
 export const createCheckoutSession = async (req: Request, res: Response) => {
 
