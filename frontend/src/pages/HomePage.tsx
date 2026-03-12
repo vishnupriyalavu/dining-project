@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import FoodCard from "../components/FoodCard"
 import { getFoods } from "../services/foodService"
+import FoodCarousel from "../components/FoodCarousel"
 
 export default function HomePage() {
 
@@ -40,13 +41,14 @@ export default function HomePage() {
       </div>
     )
   }
+return (
+  <div className="max-w-6xl mx-auto p-6">
 
-  return (
-    <div className="max-w-6xl mx-auto p-6">
+    <FoodCarousel />
 
-      <h1 className="text-3xl font-bold text-gray-800">
-        Discover Delicious Food
-      </h1>
+    <h1 className="text-3xl font-bold text-gray-800">
+      Discover Delicious Food
+    </h1>
 
       <p className="text-gray-500 mt-2 mb-6">
         Browse our menu and order your favorite meals.
@@ -57,14 +59,16 @@ export default function HomePage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-          {foods.map((food) => (
-            <FoodCard
-              key={food.id}
-              name={food.name}
-              price={food.price}
-              image={food.image}
-            />
-          ))}
+{foods.map((food) => (
+  <FoodCard
+    key={food.id}
+    id={food.id}
+    name={food.name}
+    description={food.description}
+    price={food.price}
+    image={food.image}
+  />
+))}
 
         </div>
       )}

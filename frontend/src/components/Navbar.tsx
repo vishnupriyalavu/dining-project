@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom"
 import { ShoppingCart } from "lucide-react"
+import { useCartStore } from "../store/cartStore"
+
 
 export default function Navbar() {
+  const cart = useCartStore((state) => state.cart);
+
   return (
     <nav className="w-full border-b bg-white shadow-sm">
 
@@ -25,13 +29,18 @@ export default function Navbar() {
             Home
           </Link>
 
-          <Link
-            to="/cart"
-            className="flex items-center gap-2 text-gray-700 hover:text-orange-500"
-          >
-            <ShoppingCart size={20} />
-            Cart
-          </Link>
+<Link
+  to="/cart"
+  className="flex items-center gap-1 relative"
+>
+  <ShoppingCart size={20} />
+
+  {cart.length > 0 && (
+    <span className="absolute -top-2 -right-3 bg-orange-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+      {cart.length}
+    </span>
+  )}
+</Link>
 
           <Link
             to="/login"
