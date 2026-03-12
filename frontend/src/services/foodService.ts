@@ -5,6 +5,8 @@ export const getFoods = async () => {
   return response.data;
 };
 
+
+
 export const getFeaturedFoods = async () => {
   const response = await api.get("/foods/featured");
   return response.data;
