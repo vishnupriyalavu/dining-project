@@ -1,20 +1,15 @@
-import { useState } from 'react'
-import './App.css'
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <h1>Dining Project</h1>
-
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-      </div>
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
