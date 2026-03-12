@@ -1,25 +1,31 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { Suspense, lazy } from "react"
 import Navbar from "./components/Navbar"
 
-import LoginPage from "./pages/LoginPage"
-import RegisterPage from "./pages/RegisterPage"
-import HomePage from "./pages/HomePage"
-import CartPage from "./pages/CartPage"
+// Lazy load pages
+const HomePage = lazy(() => import("./pages/HomePage"))
+const LoginPage = lazy(() => import("./pages/LoginPage"))
+const RegisterPage = lazy(() => import("./pages/RegisterPage"))
+const CartPage = lazy(() => import("./pages/CartPage"))
 
 function App() {
   return (
-    <BrowserRouter>
+    <Router>
 
       <Navbar />
 
-<Routes>
-  <Route path="/" element={<HomePage />} />
-  <Route path="/login" element={<LoginPage />} />
-  <Route path="/register" element={<RegisterPage />} />
-  <Route path="/cart" element={<CartPage />} />
-</Routes>
+      <Suspense fallback={<div className="text-center mt-10">Loading...</div>}>
 
-    </BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/cart" element={<CartPage />} />
+        </Routes>
+
+      </Suspense>
+
+    </Router>
   )
 }
 
