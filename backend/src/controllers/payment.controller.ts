@@ -2,11 +2,9 @@ import { Request, Response } from "express"
 import Stripe from "stripe"
 import { prisma } from "../config/prisma"
 
+const stripe = new Stripe(process.env.SECRET_KEY as string)
+
 export const createCheckoutSession = async (req: Request, res: Response) => {
-
-  const stripe = new Stripe(process.env.SECRET_KEY as string, {
-
-  })
 
   const userId = (req as any).userId
 
@@ -16,6 +14,10 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
       where: { userId },
       include: { food: true }
     })
+
+    if (cartItems.length === 0) {
+      return res.status(400).json({ message: "Cart is empty" })
+    }
 
     const lineItems = cartItems.map(item => ({
       price_data: {
@@ -33,7 +35,7 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
       line_items: lineItems,
       mode: "payment",
       success_url: "http://localhost:5173/success",
-      cancel_url: "http://localhost:5173/cancel"
+      cancel_url: "http://localhost:5173/cart"
     })
 
     res.json({ url: session.url })
