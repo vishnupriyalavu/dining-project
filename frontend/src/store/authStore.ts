@@ -1,25 +1,21 @@
-import { create } from "zustand";
+import { create } from "zustand"
 
 interface AuthState {
-  user: any;
-  token: string | null;
-  setUser: (user: any, token: string) => void;
-  logout: () => void;
+  token: string | null
+  setToken: (token: string) => void
+  logout: () => void
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  token: null,
+  token: localStorage.getItem("token"),
 
-  setUser: (user, token) =>
-    set({
-      user,
-      token,
-    }),
+  setToken: (token) => {
+    localStorage.setItem("token", token)
+    set({ token })
+  },
 
-  logout: () =>
-    set({
-      user: null,
-      token: null,
-    }),
-}));
+  logout: () => {
+    localStorage.removeItem("token")
+    set({ token: null })
+  }
+}))

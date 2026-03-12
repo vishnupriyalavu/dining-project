@@ -1,22 +1,23 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, type LoginFormData } from "../schemas/loginSchema";
-import { loginUser } from "../services/authService";
-import { useAuthStore } from "../store/authStore";
-import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { loginSchema, type LoginFormData } from "../schemas/loginSchema"
+import { loginUser } from "../services/authService"
+import { useAuthStore } from "../store/authStore"
+import { Link, useNavigate } from "react-router-dom"
 
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
+import { Button } from "../components/ui/button"
+import { Input } from "../components/ui/input"
+import { Label } from "../components/ui/label"
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "../components/ui/card";
+} from "../components/ui/card"
 
 export default function LoginPage() {
-  const setUser = useAuthStore((state) => state.setUser);
+  const setToken = useAuthStore((state) => state.setToken);
+  const navigate = useNavigate()
 
   const {
     register,
@@ -24,16 +25,24 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
-  });
+  })
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      const response = await loginUser(data);
-      setUser(response.user, response.token);
+      const response = await loginUser(data)
+
+      // Save token so ProtectedRoute can detect login
+      localStorage.setItem("token", response.token)
+
+      // Save user in Zustand
+      setToken(response.token)
+
+      // Redirect to home after login
+      navigate("/")
     } catch (error) {
-      console.error(error);
+      console.error("Login failed:", error)
     }
-  };
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-orange-100 via-white to-red-100">
@@ -68,7 +77,10 @@ export default function LoginPage() {
               )}
             </div>
 
-            <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">Login</Button>
+            <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
+              Login
+            </Button>
+
             <p className="text-center text-sm mt-4">
               Don't have an account?{" "}
               <Link to="/register" className="text-blue-600 hover:underline">
@@ -79,5 +91,5 @@ export default function LoginPage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

@@ -1,62 +1,98 @@
-import { Link } from "react-router-dom"
-import { ShoppingCart } from "lucide-react"
+import { useEffect } from "react"
+import { ClipboardList, LogIn, LogOut, ShoppingCart } from "lucide-react"
+import { Link, useNavigate } from "react-router-dom"
+
+import { useAuthStore } from "../store/authStore"
 import { useCartStore } from "../store/cartStore"
 
-
 export default function Navbar() {
-  const cart = useCartStore((state) => state.cart);
+  const navigate = useNavigate()
+  const token = useAuthStore((state) => state.token)
+  const logout = useAuthStore((state) => state.logout)
+  const cart = useCartStore((state) => state.cart)
+  const fetchCart = useCartStore((state) => state.fetchCart)
+
+  const cartCount = cart.reduce((count, item) => count + item.quantity, 0)
+
+  const handleLogout = () => {
+    logout()
+    navigate("/login")
+  }
+
+  useEffect(() => {
+    if (token) {
+      void fetchCart()
+    }
+  }, [fetchCart, token])
 
   return (
-    <nav className="w-full border-b bg-white shadow-sm">
-
-      <div className="max-w-6xl mx-auto flex items-center justify-between p-4">
-        <div className="flex gap-4">
-</div>
-
-        {/* Logo */}
-        <Link
-          to="/"
-          className="text-2xl font-bold text-orange-600"
-        >
-          🍽 Dining
+    <header className="sticky top-0 z-50 border-b border-orange-100 bg-white/90 backdrop-blur-xl">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
+        <Link to="/" className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-amber-400 text-lg font-black text-white shadow-lg shadow-orange-200">
+            D
+          </div>
+          <div>
+            <p className="text-lg font-black tracking-tight text-slate-900">
+              Dining App
+            </p>
+            <p className="text-xs uppercase tracking-[0.28em] text-slate-400">
+              Fresh food fast
+            </p>
+          </div>
         </Link>
 
-        {/* Navigation */}
-        <div className="flex items-center gap-6">
-
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link
             to="/"
-            className="text-gray-700 hover:text-orange-500"
+            className="hidden rounded-full px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-orange-50 hover:text-orange-600 sm:inline-flex"
           >
             Home
           </Link>
 
-<Link
-  to="/cart"
-  className="flex items-center gap-1 relative"
->
-  <ShoppingCart size={20} />
-
-  {cart.length > 0 && (
-    <span className="absolute -top-2 -right-3 bg-orange-500 text-white text-xs px-1.5 py-0.5 rounded-full">
-      {cart.length}
-    </span>
-  )}
-</Link>
+          {token ? (
+            <Link
+              to="/orders"
+              className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-orange-50 hover:text-orange-600 sm:px-4"
+            >
+              <ClipboardList className="h-4 w-4" />
+              <span className="hidden sm:inline">Orders</span>
+            </Link>
+          ) : null}
 
           <Link
-            to="/login"
-            className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600"
+            to="/cart"
+            className="relative inline-flex items-center gap-2 rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-900/15 transition-all duration-300 hover:scale-105 hover:bg-slate-800"
           >
-            Login
+            <ShoppingCart className="h-4 w-4" />
+            <span className="hidden sm:inline">Cart</span>
+            {cartCount > 0 ? (
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-amber-400 px-1 text-[11px] font-bold text-white">
+                {cartCount}
+              </span>
+            ) : null}
           </Link>
-          <Link to="/orders">Orders</Link>
 
-
+          {token ? (
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="inline-flex items-center gap-2 rounded-full border border-orange-200 px-4 py-2 text-sm font-semibold text-orange-600 transition hover:bg-orange-50"
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400 px-4 py-2 text-sm font-bold text-slate-950 shadow-lg shadow-orange-500/25 transition-all duration-300 hover:scale-105 hover:from-orange-400 hover:via-amber-400 hover:to-yellow-300"
+            >
+              <LogIn className="h-4 w-4" />
+              <span className="hidden sm:inline">Login</span>
+            </Link>
+          )}
         </div>
-
-      </div>
-
-    </nav>
+      </nav>
+    </header>
   )
 }
