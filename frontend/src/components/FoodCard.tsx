@@ -47,20 +47,12 @@ export default function FoodCard({
 
           <Button
             className="bg-orange-500 hover:bg-orange-600"
-            onClick={() =>
-              addToCart({
-                id,
-                name,
-                price,
-                image,
-                quantity: 1,
-              })
-            }
+            onClick={handleAddToCart}
           >
             Add
           </Button>
         </div>
       </CardContent>
     </Card>
-  );
-}
+  )
+};
