@@ -10,6 +10,8 @@ export default function Navbar() {
     <nav className="w-full border-b bg-white shadow-sm">
 
       <div className="max-w-6xl mx-auto flex items-center justify-between p-4">
+        <div className="flex gap-4">
+</div>
 
         {/* Logo */}
         <Link
@@ -48,6 +50,8 @@ export default function Navbar() {
           >
             Login
           </Link>
+          <Link to="/orders">Orders</Link>
+
 
         </div>
 
