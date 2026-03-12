@@ -6,6 +6,26 @@ export default function CartPage() {
   const cart = useCartStore((state) => state.cart)
   const increase = useCartStore((state) => state.increaseQuantity)
   const decrease = useCartStore((state) => state.decreaseQuantity)
+  const handleCheckout = async () => {
+  try {
+    const token = localStorage.getItem("token")
+
+    const res = await fetch("http://localhost:5000/orders/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    const data = await res.json()
+
+    console.log("Order created:", data)
+
+  } catch (error) {
+    console.error(error)
+  }
+}
 
   const totalPrice = cart.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -90,10 +110,15 @@ export default function CartPage() {
         <h2 className="text-xl font-bold">
           Total: ₹{totalPrice}
         </h2>
-
-        <Button className="bg-orange-500 hover:bg-orange-600">
-          Checkout
-        </Button>
+<div className="flex justify-end mt-4">
+  <Button
+    onClick={handleCheckout}
+    disabled={cart.length === 0}
+    className="bg-green-600 hover:bg-green-700 px-6 py-2"
+  >
+    Checkout
+  </Button>
+</div>
 
       </div>
 
