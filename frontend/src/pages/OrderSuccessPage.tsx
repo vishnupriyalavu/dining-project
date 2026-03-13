@@ -1,67 +1,116 @@
-import { CheckCircle2, Clock3, MapPinned } from "lucide-react"
+import { useEffect, useState } from "react"
+import { CheckCircle2, LoaderCircle, PartyPopper } from "lucide-react"
 import { Link } from "react-router-dom"
 
+import { useCartStore } from "../store/cartStore"
+
 export default function OrderSuccessPage() {
+  const clearCart = useCartStore((state) => state.clearCart)
+  const [isFinalizing, setIsFinalizing] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const finalizeOrder = async () => {
+      try {
+        const token = localStorage.getItem("token")
+
+        if (!token) {
+          throw new Error("Please log in again to view the order status.")
+        }
+
+        const response = await fetch("http://localhost:5000/orders/checkout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        const data = await response.json()
+
+        if (!response.ok && data?.message !== "Cart is empty") {
+          throw new Error(data?.message || "Failed to finalize the order.")
+        }
+
+        clearCart()
+      } catch (finalizeError) {
+        setError(
+          finalizeError instanceof Error
+            ? finalizeError.message
+            : "Failed to finalize the order."
+        )
+      } finally {
+        setIsFinalizing(false)
+      }
+    }
+
+    void finalizeOrder()
+  }, [clearCart])
+
   return (
-    <section className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="overflow-hidden rounded-[36px] border border-emerald-100 bg-white shadow-2xl shadow-emerald-100/60">
-        <div className="bg-gradient-to-r from-emerald-500 via-lime-500 to-amber-400 px-6 py-10 text-slate-950 sm:px-10">
-          <div className="flex items-center gap-3">
-            <CheckCircle2 className="h-12 w-12" />
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.28em]">
-                Order Confirmed
-              </p>
-              <h1 className="mt-2 text-4xl font-black tracking-tight">
-                Your order was placed successfully.
-              </h1>
-            </div>
+    <section className="mx-auto flex min-h-[70vh] max-w-4xl items-center px-4 py-10 sm:px-6 lg:px-8">
+      <div className="w-full overflow-hidden rounded-[40px] border border-white/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(240,253,244,0.95))] text-center shadow-[0_28px_80px_rgba(16,185,129,0.16)]">
+        <div className="bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.24),transparent_24%),linear-gradient(135deg,#22c55e,#84cc16_55%,#fbbf24)] px-6 py-12 text-slate-950 sm:px-10">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-white/80 shadow-lg">
+            <CheckCircle2 className="h-10 w-10" />
           </div>
+          <p className="mt-5 text-sm font-semibold uppercase tracking-[0.32em]">
+            Order Success
+          </p>
+          <h1 className="mt-3 text-4xl font-black tracking-tight">
+            Your order was placed successfully.
+          </h1>
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-slate-900/75 sm:text-base">
+            {isFinalizing
+              ? "Confirming your payment and creating the order now."
+              : "The restaurant has received your order and started preparing it."}
+          </p>
         </div>
 
-        <div className="grid gap-4 p-6 sm:grid-cols-3 sm:p-10">
-          <div className="rounded-[28px] bg-slate-50 p-5">
-            <Clock3 className="h-6 w-6 text-orange-500" />
-            <h2 className="mt-3 text-lg font-bold text-slate-900">
-              Estimated Time
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-slate-500">
-              Your food should reach you in around 25 to 35 minutes.
-            </p>
+        <div className="px-6 py-10 sm:px-10">
+          <div className="mx-auto max-w-md rounded-[30px] border border-emerald-100 bg-white/90 p-6 shadow-sm">
+            {isFinalizing ? (
+              <>
+                <div className="flex items-center justify-center gap-3 text-emerald-600">
+                  <LoaderCircle className="h-6 w-6 animate-spin" />
+                  <span className="text-lg font-bold">Finalizing order</span>
+                </div>
+                <p className="mt-3 text-sm leading-6 text-slate-500">
+                  Please wait while we confirm the payment and save the order.
+                </p>
+              </>
+            ) : error ? (
+              <>
+                <div className="flex items-center justify-center gap-3 text-red-500">
+                  <PartyPopper className="h-6 w-6" />
+                  <span className="text-lg font-bold">Payment received</span>
+                </div>
+                <p className="mt-3 text-sm leading-6 text-slate-500">
+                  {error}
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center justify-center gap-3 text-emerald-600">
+                  <PartyPopper className="h-6 w-6" />
+                  <span className="text-lg font-bold">Thank you for ordering</span>
+                </div>
+                <p className="mt-3 text-sm leading-6 text-slate-500">
+                  Your payment is complete and the order is confirmed. You can
+                  return to the home page now.
+                </p>
+              </>
+            )}
           </div>
-          <div className="rounded-[28px] bg-slate-50 p-5">
-            <MapPinned className="h-6 w-6 text-orange-500" />
-            <h2 className="mt-3 text-lg font-bold text-slate-900">
-              Delivery Status
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-slate-500">
-              The kitchen has received the order and started preparing it.
-            </p>
-          </div>
-          <div className="rounded-[28px] bg-slate-50 p-5">
-            <CheckCircle2 className="h-6 w-6 text-orange-500" />
-            <h2 className="mt-3 text-lg font-bold text-slate-900">
-              Payment Mode
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-slate-500">
-              The selected payment option has been recorded with the order.
-            </p>
-          </div>
-        </div>
 
-        <div className="flex flex-col gap-3 border-t border-slate-100 px-6 py-6 sm:flex-row sm:justify-end sm:px-10">
-          <Link
-            to="/orders"
-            className="inline-flex items-center justify-center rounded-full border border-orange-200 px-6 py-3 font-semibold text-orange-600 transition hover:bg-orange-50"
-          >
-            View Orders
-          </Link>
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-full bg-slate-950 px-6 py-3 font-semibold text-white transition hover:bg-slate-800"
-          >
-            Back to Home
-          </Link>
+          <div className="mt-8 flex justify-center">
+            <Link
+              to="/"
+              className="inline-flex items-center justify-center rounded-full bg-slate-950 px-8 py-3 font-semibold text-white transition hover:bg-slate-800"
+            >
+              Back Home
+            </Link>
+          </div>
         </div>
       </div>
     </section>
