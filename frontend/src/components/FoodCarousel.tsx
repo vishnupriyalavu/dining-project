@@ -37,7 +37,7 @@ export default function FoodCarousel() {
   ])
 
   return (
-    <section className="relative overflow-hidden rounded-[36px] shadow-2xl shadow-black/20">
+    <section className="relative overflow-hidden rounded-[36px] shadow-2xl shadow-[#70193d]/20">
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex">
           {slides.map((slide) => (
@@ -50,7 +50,7 @@ export default function FoodCarousel() {
               <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-900/65 to-slate-900/10" />
               <div className="absolute inset-0 flex items-end p-6 sm:p-8 lg:p-10">
                 <div className="max-w-lg text-white">
-                  <p className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-zinc-100 backdrop-blur">
+                  <p className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-[#f6d7e3] backdrop-blur">
                     <Sparkles className="h-4 w-4" />
                     Chef specials
                   </p>
