@@ -32,15 +32,16 @@ export default function FoodCard({
   }
 
   return (
-    <Card className="group overflow-hidden rounded-[28px] border border-orange-100 bg-white shadow-lg shadow-orange-100/50 transition-all duration-300 hover:-translate-y-2 hover:scale-[1.01] hover:shadow-2xl hover:shadow-orange-200/50">
+    <Card className="group overflow-hidden rounded-[30px] border border-white/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,247,237,0.92))] shadow-[0_18px_50px_rgba(251,146,60,0.12)] transition-all duration-300 hover:-translate-y-2 hover:scale-[1.01] hover:shadow-[0_24px_70px_rgba(251,146,60,0.18)]">
       <div className="relative overflow-hidden">
         <img
           src={image}
           alt={name}
           className="h-60 w-full object-cover transition duration-500 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-slate-900/5 to-transparent" />
-        <div className="absolute bottom-4 left-4 rounded-full bg-white/90 px-3 py-1 text-sm font-semibold text-orange-600 shadow-md backdrop-blur">
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-slate-900/10 to-transparent" />
+        <div className="absolute right-4 top-4 h-24 w-24 rounded-full bg-orange-300/20 blur-2xl transition duration-500 group-hover:scale-125" />
+        <div className="absolute bottom-4 left-4 rounded-full border border-white/60 bg-white/85 px-3 py-1 text-sm font-semibold text-orange-600 shadow-md backdrop-blur">
           Fresh pick
         </div>
       </div>
@@ -50,7 +51,7 @@ export default function FoodCard({
           <h3 className="text-xl font-black tracking-tight text-slate-900">
             {name}
           </h3>
-          <p className="min-h-12 text-sm leading-6 text-slate-500">
+          <p className="min-h-12 text-sm leading-6 text-slate-500/90">
             {description}
           </p>
         </div>
@@ -60,14 +61,14 @@ export default function FoodCard({
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">
               Starting at
             </p>
-            <p className="mt-1 text-2xl font-black tracking-tight text-orange-600">
+            <p className="mt-1 bg-gradient-to-r from-orange-600 to-amber-500 bg-clip-text text-2xl font-black tracking-tight text-transparent">
               Rs. {price.toFixed(2)}
             </p>
           </div>
 
           <Button
             onClick={() => void handleAddToCart()}
-            className="h-11 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400 px-5 font-bold text-slate-950 shadow-lg shadow-orange-500/30 transition-all duration-300 hover:scale-105 hover:from-orange-400 hover:via-amber-400 hover:to-yellow-300"
+            className="h-11 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-300 px-5 font-bold text-slate-950 shadow-lg shadow-orange-500/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:from-orange-400 hover:via-amber-300 hover:to-yellow-200"
           >
             <Plus className="h-4 w-4" />
             Add to Cart

@@ -1,25 +1,18 @@
 import { useEffect, useMemo, useState } from "react"
-import { IndianRupee, Minus, Plus, ShoppingBag, Wallet } from "lucide-react"
-import { useNavigate } from "react-router-dom"
+import { Minus, Plus, ShoppingBag } from "lucide-react"
 
 import { Button } from "../components/ui/button"
 import { useCartStore } from "../store/cartStore"
 
 export default function CartPage() {
-  const navigate = useNavigate()
   const cart = useCartStore((state) => state.cart)
   const increase = useCartStore((state) => state.increaseQuantity)
   const decrease = useCartStore((state) => state.decreaseQuantity)
   const fetchCart = useCartStore((state) => state.fetchCart)
   const syncLocalCart = useCartStore((state) => state.syncLocalCart)
-  const clearCart = useCartStore((state) => state.clearCart)
   const isLoading = useCartStore((state) => state.isLoading)
   const [isCheckingOut, setIsCheckingOut] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [showPaymentOptions, setShowPaymentOptions] = useState(false)
-  const [selectedMethod, setSelectedMethod] = useState<"UPI" | "COD" | null>(
-    null
-  )
 
   const totalItems = useMemo(
     () => cart.reduce((count, item) => count + item.quantity, 0),
@@ -31,7 +24,7 @@ export default function CartPage() {
     [cart]
   )
 
-  const handlePlaceOrder = async () => {
+  const handleStripeCheckout = async () => {
     setError(null)
     setIsCheckingOut(true)
 
@@ -44,7 +37,7 @@ export default function CartPage() {
 
       await syncLocalCart()
 
-      const response = await fetch("http://localhost:5000/orders/checkout", {
+      const response = await fetch("http://localhost:5000/payment/checkout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,10 +51,11 @@ export default function CartPage() {
         throw new Error(data?.message || "Unable to start checkout.")
       }
 
-      clearCart()
-      setShowPaymentOptions(false)
-      setSelectedMethod(null)
-      navigate("/success")
+      if (!data?.url) {
+        throw new Error("Stripe checkout URL was not returned.")
+      }
+
+      window.location.href = data.url
     } catch (checkoutError) {
       setError(
         checkoutError instanceof Error
@@ -70,12 +64,6 @@ export default function CartPage() {
       )
       setIsCheckingOut(false)
     }
-  }
-
-  const handleCheckoutClick = async () => {
-    setError(null)
-    await syncLocalCart()
-    setShowPaymentOptions(true)
   }
 
   useEffect(() => {
@@ -93,8 +81,8 @@ export default function CartPage() {
   if (cart.length === 0) {
     return (
       <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="rounded-[28px] border border-orange-100 bg-white p-10 text-center shadow-lg shadow-orange-100/40">
-          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100 text-orange-600">
+        <div className="rounded-[32px] border border-white/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,247,237,0.92))] p-10 text-center shadow-[0_24px_60px_rgba(251,146,60,0.14)]">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-orange-100 to-amber-100 text-orange-600">
             <ShoppingBag className="h-8 w-8" />
           </div>
           <h1 className="text-3xl font-black tracking-tight text-slate-900">
@@ -133,13 +121,13 @@ export default function CartPage() {
             return (
               <article
                 key={item.id}
-                className="group rounded-[28px] border border-orange-100 bg-white p-4 shadow-lg shadow-orange-100/40 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:shadow-xl sm:p-5"
+                className="group rounded-[30px] border border-white/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,247,237,0.9))] p-4 shadow-[0_20px_55px_rgba(251,146,60,0.12)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[0_24px_70px_rgba(251,146,60,0.16)] sm:p-5"
               >
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="h-28 w-full rounded-2xl object-cover sm:h-28 sm:w-32"
+                    className="h-28 w-full rounded-[22px] object-cover sm:h-28 sm:w-32"
                   />
 
                   <div className="flex-1">
@@ -153,7 +141,7 @@ export default function CartPage() {
                         </p>
                       </div>
 
-                      <div className="rounded-2xl bg-orange-50 px-4 py-3 text-left sm:min-w-32 sm:text-right">
+                      <div className="rounded-[22px] border border-orange-100/80 bg-white/80 px-4 py-3 text-left shadow-sm sm:min-w-32 sm:text-right">
                         <p className="text-xs font-semibold uppercase tracking-[0.22em] text-orange-500">
                           Subtotal
                         </p>
@@ -164,7 +152,7 @@ export default function CartPage() {
                     </div>
 
                     <div className="mt-4 flex items-center justify-between gap-4">
-                      <div className="inline-flex items-center rounded-full border border-orange-200 bg-orange-50 p-1 shadow-sm">
+                      <div className="inline-flex items-center rounded-full border border-orange-200/70 bg-white/90 p-1 shadow-sm">
                         <button
                           type="button"
                           onClick={() => void decrease(item.id)}
@@ -197,7 +185,8 @@ export default function CartPage() {
           })}
         </div>
 
-        <aside className="h-fit rounded-[32px] border border-slate-200 bg-slate-950 p-6 text-white shadow-2xl shadow-slate-900/20">
+        <aside className="relative h-fit overflow-hidden rounded-[34px] border border-slate-800/40 bg-[radial-gradient(circle_at_top_left,rgba(251,146,60,0.18),transparent_26%),linear-gradient(160deg,#020617,#0f172a_55%,#1e293b)] p-6 text-white shadow-2xl shadow-slate-900/25">
+          <div className="absolute -right-10 top-0 h-40 w-40 rounded-full bg-orange-400/15 blur-3xl" />
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-orange-300">
             Payment
           </p>
@@ -209,7 +198,7 @@ export default function CartPage() {
             order instantly.
           </p>
 
-          <div className="mt-8 space-y-4 rounded-[24px] bg-white/8 p-5">
+          <div className="mt-8 space-y-4 rounded-[26px] border border-white/8 bg-white/8 p-5 backdrop-blur">
             <div className="flex items-center justify-between text-sm text-slate-300">
               <span>Items</span>
               <span>{totalItems}</span>
@@ -235,111 +224,15 @@ export default function CartPage() {
 
           <div className="mt-6 flex justify-end">
             <Button
-              onClick={() => void handleCheckoutClick()}
+              onClick={() => void handleStripeCheckout()}
               disabled={isCheckingOut}
-              className="h-12 w-full rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400 px-6 text-base font-bold text-slate-950 shadow-lg shadow-orange-500/30 transition-all duration-300 hover:scale-[1.02] hover:from-orange-400 hover:via-amber-400 hover:to-yellow-300 sm:w-auto"
+              className="h-12 w-full rounded-2xl bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-300 px-6 text-base font-bold text-slate-950 shadow-lg shadow-orange-500/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:from-orange-400 hover:via-amber-300 hover:to-yellow-200 sm:w-auto"
             >
-              Choose Payment Method
+              {isCheckingOut ? "Redirecting..." : "Checkout"}
             </Button>
           </div>
         </aside>
       </div>
-
-      {showPaymentOptions ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-[32px] bg-white p-6 shadow-2xl sm:p-8">
-            <p className="text-sm font-semibold uppercase tracking-[0.28em] text-orange-500">
-              Payment Options
-            </p>
-            <h2 className="mt-3 text-3xl font-black tracking-tight text-slate-900">
-              Select how you want to pay
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-slate-500">
-              Choose a simple payment mode and place the order instantly.
-            </p>
-
-            <div className="mt-6 grid gap-4">
-              <button
-                type="button"
-                onClick={() => setSelectedMethod("UPI")}
-                className={`rounded-[28px] border p-5 text-left transition-all ${
-                  selectedMethod === "UPI"
-                    ? "border-orange-400 bg-orange-50 shadow-lg shadow-orange-100"
-                    : "border-slate-200 bg-white hover:border-orange-300 hover:bg-orange-50/50"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="rounded-2xl bg-slate-950 p-3 text-white">
-                    <IndianRupee className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-lg font-bold text-slate-900">UPI</p>
-                    <p className="text-sm text-slate-500">
-                      Confirm the order with a simple digital payment option.
-                    </p>
-                  </div>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSelectedMethod("COD")}
-                className={`rounded-[28px] border p-5 text-left transition-all ${
-                  selectedMethod === "COD"
-                    ? "border-orange-400 bg-orange-50 shadow-lg shadow-orange-100"
-                    : "border-slate-200 bg-white hover:border-orange-300 hover:bg-orange-50/50"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="rounded-2xl bg-slate-950 p-3 text-white">
-                    <Wallet className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-lg font-bold text-slate-900">
-                      Cash on Delivery
-                    </p>
-                    <p className="text-sm text-slate-500">
-                      Pay when the order reaches your doorstep.
-                    </p>
-                  </div>
-                </div>
-              </button>
-            </div>
-
-            {selectedMethod ? (
-              <p className="mt-5 rounded-2xl bg-slate-50 px-4 py-3 text-sm font-medium text-slate-600">
-                Selected: {selectedMethod}
-              </p>
-            ) : null}
-
-            {error ? (
-              <p className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-                {error}
-              </p>
-            ) : null}
-
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
-              <button
-                type="button"
-                onClick={() => {
-                  setShowPaymentOptions(false)
-                  setSelectedMethod(null)
-                }}
-                className="rounded-full border border-slate-200 px-6 py-3 font-semibold text-slate-600 transition hover:bg-slate-50"
-              >
-                Cancel
-              </button>
-              <Button
-                onClick={() => void handlePlaceOrder()}
-                disabled={!selectedMethod || isCheckingOut}
-                className="h-12 rounded-full bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400 px-6 text-base font-bold text-slate-950 shadow-lg shadow-orange-500/30 transition-all duration-300 hover:scale-[1.02] hover:from-orange-400 hover:via-amber-400 hover:to-yellow-300"
-              >
-                {isCheckingOut ? "Placing Order..." : "Place Order"}
-              </Button>
-            </div>
-          </div>
-        </div>
-      ) : null}
     </section>
   )
 }
