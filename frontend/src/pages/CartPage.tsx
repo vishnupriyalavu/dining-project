@@ -81,8 +81,8 @@ export default function CartPage() {
   if (cart.length === 0) {
     return (
       <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="rounded-[32px] border border-white/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,247,237,0.92))] p-10 text-center shadow-[0_24px_60px_rgba(251,146,60,0.14)]">
-          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-orange-100 to-amber-100 text-orange-600">
+        <div className="rounded-[32px] border border-black/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(244,244,245,0.95))] p-10 text-center shadow-[0_24px_60px_rgba(15,23,42,0.08)]">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-zinc-100 to-zinc-200 text-black">
             <ShoppingBag className="h-8 w-8" />
           </div>
           <h1 className="text-3xl font-black tracking-tight text-slate-900">
@@ -101,7 +101,7 @@ export default function CartPage() {
     <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-orange-500">
+          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-black">
             Cart Summary
           </p>
           <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
@@ -121,7 +121,7 @@ export default function CartPage() {
             return (
               <article
                 key={item.id}
-                className="group rounded-[30px] border border-white/80 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(255,247,237,0.9))] p-4 shadow-[0_20px_55px_rgba(251,146,60,0.12)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[0_24px_70px_rgba(251,146,60,0.16)] sm:p-5"
+                className="group rounded-[30px] border border-black/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(244,244,245,0.95))] p-4 shadow-[0_20px_55px_rgba(15,23,42,0.08)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[0_24px_70px_rgba(15,23,42,0.12)] sm:p-5"
               >
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                   <img
@@ -141,8 +141,8 @@ export default function CartPage() {
                         </p>
                       </div>
 
-                      <div className="rounded-[22px] border border-orange-100/80 bg-white/80 px-4 py-3 text-left shadow-sm sm:min-w-32 sm:text-right">
-                        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-orange-500">
+                      <div className="rounded-[22px] border border-black/10 bg-white/80 px-4 py-3 text-left shadow-sm sm:min-w-32 sm:text-right">
+                        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-black">
                           Subtotal
                         </p>
                         <p className="mt-1 text-lg font-black text-slate-900">
@@ -152,11 +152,11 @@ export default function CartPage() {
                     </div>
 
                     <div className="mt-4 flex items-center justify-between gap-4">
-                      <div className="inline-flex items-center rounded-full border border-orange-200/70 bg-white/90 p-1 shadow-sm">
+                      <div className="inline-flex items-center rounded-full border border-black/10 bg-white/90 p-1 shadow-sm">
                         <button
                           type="button"
                           onClick={() => void decrease(item.id)}
-                          className="rounded-full p-2 text-slate-700 transition hover:bg-white hover:text-orange-600"
+                          className="rounded-full p-2 text-slate-700 transition hover:bg-zinc-100 hover:text-black"
                           aria-label={`Decrease quantity of ${item.name}`}
                         >
                           <Minus className="h-4 w-4" />
@@ -167,7 +167,7 @@ export default function CartPage() {
                         <button
                           type="button"
                           onClick={() => void increase(item.id)}
-                          className="rounded-full p-2 text-slate-700 transition hover:bg-white hover:text-orange-600"
+                          className="rounded-full p-2 text-slate-700 transition hover:bg-zinc-100 hover:text-black"
                           aria-label={`Increase quantity of ${item.name}`}
                         >
                           <Plus className="h-4 w-4" />
@@ -185,17 +185,16 @@ export default function CartPage() {
           })}
         </div>
 
-        <aside className="relative h-fit overflow-hidden rounded-[34px] border border-slate-800/40 bg-[radial-gradient(circle_at_top_left,rgba(251,146,60,0.18),transparent_26%),linear-gradient(160deg,#020617,#0f172a_55%,#1e293b)] p-6 text-white shadow-2xl shadow-slate-900/25">
-          <div className="absolute -right-10 top-0 h-40 w-40 rounded-full bg-orange-400/15 blur-3xl" />
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-orange-300">
+        <aside className="relative h-fit overflow-hidden rounded-[34px] border border-black/10 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.08),transparent_26%),linear-gradient(160deg,#000000,#18181b_55%,#3f3f46)] p-6 text-white shadow-2xl shadow-slate-900/25">
+          <div className="absolute -right-10 top-0 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-zinc-300">
             Payment
           </p>
           <h2 className="mt-3 text-2xl font-black tracking-tight">
             Ready to place the order?
           </h2>
           <p className="mt-2 text-sm leading-6 text-slate-300">
-            Confirm your items, choose UPI or cash on delivery, and place the
-            order instantly.
+            Confirm your items and continue to secure checkout instantly.
           </p>
 
           <div className="mt-8 space-y-4 rounded-[26px] border border-white/8 bg-white/8 p-5 backdrop-blur">
@@ -226,7 +225,7 @@ export default function CartPage() {
             <Button
               onClick={() => void handleStripeCheckout()}
               disabled={isCheckingOut}
-              className="h-12 w-full rounded-2xl bg-gradient-to-r from-orange-500 via-amber-400 to-yellow-300 px-6 text-base font-bold text-slate-950 shadow-lg shadow-orange-500/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:from-orange-400 hover:via-amber-300 hover:to-yellow-200 sm:w-auto"
+              className="h-12 w-full rounded-2xl bg-gradient-to-r from-white to-zinc-200 px-6 text-base font-bold text-black shadow-lg shadow-black/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:from-zinc-100 hover:to-zinc-300 sm:w-auto"
             >
               {isCheckingOut ? "Redirecting..." : "Checkout"}
             </Button>

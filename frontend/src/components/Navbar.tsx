@@ -1,5 +1,11 @@
 import { useEffect } from "react"
-import { ClipboardList, LogIn, LogOut, ShoppingCart } from "lucide-react"
+import {
+  ClipboardList,
+  LogIn,
+  LogOut,
+  ShoppingCart,
+  UserRound,
+} from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 
 import { useAuthStore } from "../store/authStore"
@@ -11,10 +17,12 @@ export default function Navbar() {
   const logout = useAuthStore((state) => state.logout)
   const cart = useCartStore((state) => state.cart)
   const fetchCart = useCartStore((state) => state.fetchCart)
+  const clearCart = useCartStore((state) => state.clearCart)
 
   const cartCount = cart.reduce((count, item) => count + item.quantity, 0)
 
   const handleLogout = () => {
+    clearCart()
     logout()
     navigate("/login")
   }
@@ -26,10 +34,10 @@ export default function Navbar() {
   }, [fetchCart, token])
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/50 bg-[linear-gradient(180deg,rgba(255,251,235,0.95),rgba(255,255,255,0.86))] backdrop-blur-2xl">
+    <header className="sticky top-0 z-50 border-b border-black/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(245,245,245,0.9))] backdrop-blur-2xl">
       <nav className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-[20px] bg-gradient-to-br from-orange-500 via-amber-400 to-yellow-300 text-lg font-black text-white shadow-lg shadow-orange-200 ring-1 ring-white/70">
+          <div className="flex h-11 w-11 items-center justify-center rounded-[20px] bg-gradient-to-br from-black via-zinc-800 to-zinc-600 text-lg font-black text-white shadow-lg shadow-black/20 ring-1 ring-white/70">
             D
           </div>
           <div>
@@ -45,7 +53,7 @@ export default function Navbar() {
         <div className="flex items-center gap-2 sm:gap-3">
           <Link
             to="/"
-            className="hidden rounded-full px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white hover:text-orange-600 hover:shadow-md sm:inline-flex"
+            className="hidden rounded-full px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white hover:text-black hover:shadow-md sm:inline-flex"
           >
             Home
           </Link>
@@ -53,31 +61,45 @@ export default function Navbar() {
           {token ? (
             <Link
               to="/orders"
-              className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white hover:text-orange-600 hover:shadow-md sm:px-4"
+              className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold text-slate-600 transition hover:bg-white hover:text-black hover:shadow-md sm:px-4"
             >
               <ClipboardList className="h-4 w-4" />
               <span className="hidden sm:inline">Orders</span>
             </Link>
           ) : null}
 
-          <Link
-            to="/cart"
-            className="relative inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-slate-950 to-slate-800 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition-all duration-300 hover:scale-105 hover:shadow-xl"
-          >
-            <ShoppingCart className="h-4 w-4" />
-            <span className="hidden sm:inline">Cart</span>
-            {cartCount > 0 ? (
-              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-gradient-to-r from-orange-500 to-amber-400 px-1 text-[11px] font-bold text-white">
-                {cartCount}
+          {token ? (
+            <Link
+              to="/profile"
+              className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/80 px-3 py-2 text-sm font-semibold text-slate-600 shadow-sm transition hover:bg-white hover:text-black hover:shadow-md sm:px-4"
+            >
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-black via-zinc-800 to-zinc-600 text-white">
+                <UserRound className="h-4 w-4" />
               </span>
-            ) : null}
-          </Link>
+              <span className="hidden sm:inline">Profile</span>
+            </Link>
+          ) : null}
+
+          {token ? (
+            <Link
+              to="/cart"
+              className="relative inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-slate-950 to-slate-800 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition-all duration-300 hover:scale-105 hover:shadow-xl"
+            >
+              <ShoppingCart className="h-4 w-4" />
+              <span className="hidden sm:inline">Cart</span>
+              {cartCount > 0 ? (
+                <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-[11px] font-bold text-black ring-1 ring-black/10">
+                  {cartCount}
+                </span>
+              ) : null}
+            </Link>
+          ) : null}
 
           {token ? (
             <button
               type="button"
               onClick={handleLogout}
-              className="inline-flex items-center gap-2 rounded-full border border-orange-200/80 bg-white/80 px-4 py-2 text-sm font-semibold text-orange-600 shadow-sm transition hover:bg-orange-50 hover:shadow-md"
+              className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/80 px-4 py-2 text-sm font-semibold text-black shadow-sm transition hover:bg-zinc-100 hover:shadow-md"
             >
               <LogOut className="h-4 w-4" />
               <span className="hidden sm:inline">Logout</span>
@@ -85,7 +107,7 @@ export default function Navbar() {
           ) : (
             <Link
               to="/login"
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-300 px-4 py-2 text-sm font-bold text-slate-950 shadow-lg shadow-orange-500/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:from-orange-400 hover:via-amber-400 hover:to-yellow-200"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-black via-zinc-800 to-zinc-600 px-4 py-2 text-sm font-bold text-white shadow-lg shadow-black/20 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:from-zinc-900 hover:via-zinc-700 hover:to-zinc-500"
             >
               <LogIn className="h-4 w-4" />
               <span className="hidden sm:inline">Login</span>

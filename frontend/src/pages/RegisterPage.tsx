@@ -1,8 +1,12 @@
+import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { registerSchema,type  RegisterFormData } from "../schemas/registerSchema"
 import { registerUser } from "../services/authService"
+import { useAuthStore } from "../store/authStore"
+import { useCartStore } from "../store/cartStore"
+import { toast } from "sonner"
 
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
@@ -10,6 +14,14 @@ import { Label } from "../components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 
 export default function RegisterPage() {
+  const navigate = useNavigate()
+  const logout = useAuthStore((state) => state.logout)
+  const clearCart = useCartStore((state) => state.clearCart)
+
+  useEffect(() => {
+    clearCart()
+    logout()
+  }, [clearCart, logout])
 
   const {
     register,
@@ -22,9 +34,15 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterFormData) => {
     try {
       await registerUser(data)
-      alert("User registered successfully")
+      toast.success("Registered successfully. Please log in.")
+      navigate("/login")
     } catch (error) {
       console.error(error)
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Registration failed. Please try again."
+      )
     }
   }
 
@@ -77,7 +95,7 @@ export default function RegisterPage() {
             </Button>
             <p className="text-center text-sm mt-4">
   Already have an account?{" "}
-  <Link to="/" className="text-blue-600 hover:underline">
+  <Link to="/login" className="text-blue-600 hover:underline">
     Login
   </Link>
 </p>

@@ -1,26 +1,42 @@
 import { Request, Response } from "express"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import {prisma} from "../config/prisma"
+import { Prisma } from "@prisma/client"
+
+import { prisma } from "../config/prisma"
 
 export const registerUser = async (req: Request, res: Response) => {
   const { name, email, password } = req.body
 
   try {
+    if (!name?.trim() || !email?.trim() || !password?.trim()) {
+      return res.status(400).json({ message: "Name, email, and password are required" })
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10)
 
     const user = await prisma.user.create({
       data: {
-        name,
-        email,
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
         password: hashedPassword
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true
       }
     })
 
     res.status(201).json(user)
 
   } catch (error) {
-    res.status(500).json({ message: "Registration failed" })
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      return res.status(409).json({ message: "Email already registered" })
+    }
+
+    console.error("Registration failed:", error)
+    res.status(500).json({ message: "Registration failed. Please check backend configuration." })
   }
 }
 
@@ -28,8 +44,12 @@ export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body
 
   try {
+    if (!email?.trim() || !password?.trim()) {
+      return res.status(400).json({ message: "Email and password are required" })
+    }
+
     const user = await prisma.user.findUnique({
-      where: { email }
+      where: { email: email.trim().toLowerCase() }
     })
 
     if (!user) {
@@ -51,6 +71,7 @@ export const loginUser = async (req: Request, res: Response) => {
     res.json({ token })
 
   } catch (error) {
+    console.error("Login failed:", error)
     res.status(500).json({ message: "Login failed" })
   }
 }

@@ -1,9 +1,12 @@
+import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { loginSchema, type LoginFormData } from "../schemas/loginSchema"
 import { loginUser } from "../services/authService"
 import { useAuthStore } from "../store/authStore"
 import { Link, useNavigate } from "react-router-dom"
+import { useCartStore } from "../store/cartStore"
+import { toast } from "sonner"
 
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
@@ -16,8 +19,15 @@ import {
 } from "../components/ui/card"
 
 export default function LoginPage() {
-  const setToken = useAuthStore((state) => state.setToken);
+  const setToken = useAuthStore((state) => state.setToken)
+  const logout = useAuthStore((state) => state.logout)
+  const clearCart = useCartStore((state) => state.clearCart)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    clearCart()
+    logout()
+  }, [clearCart, logout])
 
   const {
     register,
@@ -31,16 +41,16 @@ export default function LoginPage() {
     try {
       const response = await loginUser(data)
 
-      // Save token so ProtectedRoute can detect login
-      localStorage.setItem("token", response.token)
-
-      // Save user in Zustand
       setToken(response.token)
-
-      // Redirect to home after login
+      toast.success("Logged in successfully")
       navigate("/")
     } catch (error) {
       console.error("Login failed:", error)
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Login failed. Please check your email and password."
+      )
     }
   }
 

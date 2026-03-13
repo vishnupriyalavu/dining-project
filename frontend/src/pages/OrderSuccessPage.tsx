@@ -1,21 +1,38 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { CheckCircle2, LoaderCircle, PartyPopper } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, useSearchParams } from "react-router-dom"
 
 import { useCartStore } from "../store/cartStore"
 
 export default function OrderSuccessPage() {
   const clearCart = useCartStore((state) => state.clearCart)
+  const [searchParams] = useSearchParams()
   const [isFinalizing, setIsFinalizing] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const hasStartedRef = useRef(false)
 
   useEffect(() => {
+    if (hasStartedRef.current) {
+      return
+    }
+
+    hasStartedRef.current = true
+
     const finalizeOrder = async () => {
       try {
         const token = localStorage.getItem("token")
+        const sessionId = searchParams.get("session_id")
+        const finalizeKey = sessionId
+          ? `finalized_order_${sessionId}`
+          : "finalized_order_fallback"
 
         if (!token) {
           throw new Error("Please log in again to view the order status.")
+        }
+
+        if (sessionStorage.getItem(finalizeKey) === "done") {
+          clearCart()
+          return
         }
 
         const response = await fetch("http://localhost:5000/orders/checkout", {
@@ -32,6 +49,7 @@ export default function OrderSuccessPage() {
           throw new Error(data?.message || "Failed to finalize the order.")
         }
 
+        sessionStorage.setItem(finalizeKey, "done")
         clearCart()
       } catch (finalizeError) {
         setError(
@@ -45,7 +63,7 @@ export default function OrderSuccessPage() {
     }
 
     void finalizeOrder()
-  }, [clearCart])
+  }, [clearCart, searchParams])
 
   return (
     <section className="mx-auto flex min-h-[70vh] max-w-4xl items-center px-4 py-10 sm:px-6 lg:px-8">

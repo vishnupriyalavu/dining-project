@@ -1,0 +1,5 @@
+
+> backend@1.0.0 dev
+> tsx src/server.ts
+
+[dotenv@17.3.1] injecting env (0) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
