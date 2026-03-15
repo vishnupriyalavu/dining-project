@@ -6,6 +6,7 @@ import { Button } from "../components/ui/button"
 import { Card, CardContent } from "../components/ui/card"
 import { Input } from "../components/ui/input"
 import { Label } from "../components/ui/label"
+import { API_BASE_URL } from "../services/api"
 import { useAuthStore } from "../store/authStore"
 
 interface Profile {
@@ -32,7 +33,7 @@ export default function ProfilePage() {
           throw new Error("Missing token")
         }
 
-        const response = await fetch("http://localhost:5000/profile", {
+        const response = await fetch(`${API_BASE_URL}/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -80,7 +81,7 @@ export default function ProfilePage() {
         throw new Error("Please log in again.")
       }
 
-      const response = await fetch("http://localhost:5000/profile", {
+      const response = await fetch(`${API_BASE_URL}/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

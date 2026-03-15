@@ -1,3 +1,4 @@
+//critical part of the backend handles the transitions from browsing(cart) to buying(order)
 import { Request, Response } from "express"
 import { prisma } from "../config/prisma"
 
@@ -69,9 +70,9 @@ export const getOrders = async (req: Request, res: Response) => {
 
   try {
 
-    const orders = await prisma.order.findMany({
-      where: { userId },
-      include: {
+    const orders = await prisma.order.findMany({ //It only finds orders belonging to the specific userId
+      where: { userId }, 
+      include: { //it shows the image and item what was ordered
         items: {
           include: {
             product: true

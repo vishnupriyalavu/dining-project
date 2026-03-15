@@ -11,7 +11,7 @@ export const registerUser = async (req: Request, res: Response) => {
   try {
     if (!name?.trim() || !email?.trim() || !password?.trim()) {
       return res.status(400).json({ message: "Name, email, and password are required" })
-    }
+    } //trim removes extra spaces
 
     const hashedPassword = await bcrypt.hash(password, 10)
 
@@ -21,7 +21,7 @@ export const registerUser = async (req: Request, res: Response) => {
         email: email.trim().toLowerCase(),
         password: hashedPassword
       },
-      select: {
+      select: { //tells the DB to send all this except pwd
         id: true,
         name: true,
         email: true

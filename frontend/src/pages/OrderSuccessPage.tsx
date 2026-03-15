@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { CheckCircle2, LoaderCircle, PartyPopper } from "lucide-react"
 import { Link, useSearchParams } from "react-router-dom"
 
+import { API_BASE_URL } from "../services/api"
 import { useCartStore } from "../store/cartStore"
 
 export default function OrderSuccessPage() {
@@ -35,7 +36,7 @@ export default function OrderSuccessPage() {
           return
         }
 
-        const response = await fetch("http://localhost:5000/orders/checkout", {
+        const response = await fetch(`${API_BASE_URL}/orders/checkout`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

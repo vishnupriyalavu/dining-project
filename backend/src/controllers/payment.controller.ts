@@ -25,7 +25,7 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
         product_data: {
           name: item.food.name
         },
-        unit_amount: Math.round(item.food.price * 100)
+        unit_amount: Math.round(item.food.price * 100)//stripe calculates in paise/cents
       },
       quantity: item.quantity
     }))

@@ -1,45 +1,40 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { ArrowRight, Clock3, Star, Truck } from "lucide-react"
 
 import FoodCard from "../components/FoodCard"
 import FoodCarousel from "../components/FoodCarousel"
-import { getFoods } from "../services/foodService"
-
-interface Food {
-  id: string
-  name: string
-  description: string
-  price: number
-  image: string
-}
+import { getFeaturedFoods, getFoods, type Food } from "../services/foodService"
 
 export default function HomePage() {
   const [foods, setFoods] = useState<Food[]>([])
+  const [featuredFoods, setFeaturedFoods] = useState<Food[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
 
   useEffect(() => {
     const fetchFoods = async () => {
       try {
-        const data = await getFoods()
+        setError("")
 
-        if (Array.isArray(data)) {
-          setFoods(data)
-        } else if (Array.isArray(data?.foods)) {
-          setFoods(data.foods)
-        } else {
-          setFoods([])
-        }
+        const [foodsData, featuredData] = await Promise.all([
+          getFoods(),
+          getFeaturedFoods().catch(() => [])
+        ])
+
+        setFoods(foodsData)
+        setFeaturedFoods(featuredData.length > 0 ? featuredData : foodsData.slice(0, 3))
       } catch (error) {
         console.error("Error fetching foods:", error)
+        setFoods([])
+        setFeaturedFoods([])
+        setError("Unable to load menu items right now.")
       } finally {
         setLoading(false)
       }
     }
 
-    fetchFoods()
+    void fetchFoods()
   }, [])
-
-  const featuredFoods = useMemo(() => foods.slice(0, 3), [foods])
 
   if (loading) {
     return (
@@ -197,6 +192,12 @@ export default function HomePage() {
             Discover delicious food for every craving
           </h2>
         </div>
+
+        {error ? (
+          <div className="mb-6 rounded-[24px] border border-red-200 bg-red-50 px-5 py-4 text-sm font-medium text-red-600">
+            {error}
+          </div>
+        ) : null}
 
         {foods.length === 0 ? (
           <div className="rounded-[30px] border border-[#70193d]/10 bg-white/90 p-8 text-center shadow-[0_18px_50px_rgba(112,25,61,0.08)]">

@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react"
 import { CalendarDays, ReceiptText } from "lucide-react"
 
+import { API_BASE_URL } from "../services/api"
+
 interface Food {
   name: string
   price: number
@@ -29,7 +31,7 @@ export default function OrdersPage() {
       try {
         const token = localStorage.getItem("token")
 
-        const response = await fetch("http://localhost:5000/orders/history", {
+        const response = await fetch(`${API_BASE_URL}/orders/history`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

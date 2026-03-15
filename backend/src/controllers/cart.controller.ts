@@ -1,6 +1,6 @@
 import { Request, Response } from "express"
 import { prisma } from "../config/prisma"
-import { stringify } from "node:querystring"
+import { stringify } from "node:querystring" //converts a jS objects into a URL qury string and mainlu used in GET requests
 
 interface AuthRequest extends Request {
   userId?: string

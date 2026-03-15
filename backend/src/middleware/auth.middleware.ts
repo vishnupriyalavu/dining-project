@@ -10,7 +10,7 @@ export const authenticate = (
   res: Response,
   next: NextFunction
 ) => {
-  const authHeader = req.headers.authorization
+  const authHeader = req.headers.authorization //bearer token
 
   if (!authHeader) {
     return res.status(401).json({

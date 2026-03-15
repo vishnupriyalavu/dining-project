@@ -10,7 +10,7 @@ const router = Router()
 
 router.get("/", getFoods)
 router.get("/search", searchFood)
-router.get("/:id", getFoodById)
 router.get("/featured", getFeaturedFoods)
+router.get("/:id", getFoodById)
 
 export default router

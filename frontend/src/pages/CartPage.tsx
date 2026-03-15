@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import { Minus, Plus, ShoppingBag } from "lucide-react"
 
 import { Button } from "../components/ui/button"
+import { API_BASE_URL } from "../services/api"
 import { useCartStore } from "../store/cartStore"
 
 export default function CartPage() {
@@ -37,7 +38,7 @@ export default function CartPage() {
 
       await syncLocalCart()
 
-      const response = await fetch("http://localhost:5000/payment/checkout", {
+      const response = await fetch(`${API_BASE_URL}/payment/checkout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

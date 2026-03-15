@@ -1,9 +1,9 @@
 import { Request, Response } from "express"
 import {prisma} from "../config/prisma"
 
-export const getFoods = async (req: Request, res: Response) => {
+export const getFoods = async (req: Request, res: Response) => { //menu page, shows all the foods in the database
   try {
-    const foods = await prisma.food.findMany()
+    const foods = await prisma.food.findMany() //to get evrysingle row in food table
 
     res.status(200).json(foods)
   } catch (error) {
@@ -21,7 +21,7 @@ export const getFoodById = async (req: Request, res: Response) => {
       where: { id }
     })
 
-    if (!food) {
+    if (!food) { //user tries to access a food ID that was deleted or doesn't exist, you send a 404
       return res.status(404).json({
         message: "Food not found"
       })
@@ -37,16 +37,18 @@ export const getFoodById = async (req: Request, res: Response) => {
 }
 
 export const searchFood = async (req: Request, res: Response) => {
-  const query = req.query.q as string
+  const query = (req.query.q as string | undefined)?.trim()
 
   try {
     const foods = await prisma.food.findMany({
-      where: {
-        name: {
-          contains: query,
-          mode: "insensitive"
-        }
-      }
+      where: query
+        ? {
+            name: {
+              contains: query,
+              mode: "insensitive"
+            }
+          }
+        : undefined
     })
 
     res.status(200).json(foods)
