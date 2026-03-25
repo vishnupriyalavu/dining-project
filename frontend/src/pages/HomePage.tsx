@@ -14,6 +14,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetchFoods = async () => {
       try {
+
         setError("")
 
         const [foodsData, featuredData] = await Promise.all([
@@ -104,14 +105,14 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2"> 
           {featuredFoods.slice(0, 2).map((food) => (
             <div
               key={food.id}
               className="group relative overflow-hidden rounded-[34px] border border-[#70193d]/10 shadow-[0_24px_70px_rgba(112,25,61,0.12)]"
             >
               <img
-                src={food.image}
+                src={food.image}//displays the image of the food item
                 alt={food.name}
                 className="h-64 w-full object-cover transition duration-500 group-hover:scale-110"
               />

@@ -1,14 +1,14 @@
 import { Request, Response } from "express"
 import Stripe from "stripe"
+import { FRONTEND_URL, getStripeSecretKey } from "../config/env"
 import { prisma } from "../config/prisma"
-
-const stripe = new Stripe(process.env.SECRET_KEY as string)
 
 export const createCheckoutSession = async (req: Request, res: Response) => {
 
   const userId = (req as any).userId
 
   try {
+    const stripe = new Stripe(getStripeSecretKey())
 
     const cartItems = await prisma.cartItem.findMany({
       where: { userId },
@@ -34,8 +34,8 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
-      success_url: "http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}",
-      cancel_url: "http://localhost:5173/cart"
+      success_url: `${FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${FRONTEND_URL}/cart`
     })
 
     res.json({ url: session.url })

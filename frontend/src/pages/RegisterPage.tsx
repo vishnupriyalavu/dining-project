@@ -25,9 +25,11 @@ export default function RegisterPage() {
 
   const {
     register,
+
+    
     handleSubmit,
     formState: { errors }
-  } = useForm<RegisterFormData>({
+  } = useForm<RegisterFormData>({//manges the state of the inputs(name,email,pwd)
     resolver: zodResolver(registerSchema)
   })
 

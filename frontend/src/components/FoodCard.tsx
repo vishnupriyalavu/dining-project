@@ -1,4 +1,5 @@
 import { Plus } from "lucide-react"
+import { toast } from "sonner"
 
 import { useCartStore } from "../store/cartStore"
 import { Button } from "./ui/button"
@@ -22,13 +23,20 @@ export default function FoodCard({
   const addToCart = useCartStore((state) => state.addToCart)
 
   const handleAddToCart = async () => {
-    await addToCart({
-      id,
-      name,
-      price,
-      image,
-      quantity: 1,
-    })
+    try {
+      await addToCart({
+        id,
+        name,
+        price,
+        image,
+        quantity: 1,
+      })
+      toast.success(`${name} added to cart`)
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to add item to cart"
+      )
+    }
   }
 
   return (

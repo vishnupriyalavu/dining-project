@@ -19,7 +19,7 @@ export default function Navbar() {
   const fetchCart = useCartStore((state) => state.fetchCart)
   const clearCart = useCartStore((state) => state.clearCart)
 
-  const cartCount = cart.reduce((count, item) => count + item.quantity, 0)
+  const cartCount = cart.reduce((count, item) => count + item.quantity, 0) //cart count is calculated by summing the quantity of all items in the cart. This allows us to display the total number of items in the cart, regardless of how many different products there are.
 
   const handleLogout = () => {
     clearCart()

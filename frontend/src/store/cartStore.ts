@@ -1,6 +1,8 @@
+//handles the cart operations like add,increse,decrease quantity
 import { create } from "zustand"
 
 import { API_BASE_URL } from "../services/api"
+import { useAuthStore } from "./authStore"
 
 export interface CartItem {
   cartItemId?: string
@@ -36,6 +38,23 @@ interface CartState {
 
 const getToken = () => localStorage.getItem("token")
 
+const getErrorMessage = async (response: Response, fallbackMessage: string) => {
+  try {
+    const data = await response.json()
+    if (typeof data?.message === "string" && data.message.trim()) {
+      return data.message
+    }
+  } catch {
+    // Ignore JSON parsing errors and use fallback below.
+  }
+
+  return fallbackMessage
+}
+
+const handleUnauthorized = () => {
+  useAuthStore.getState().logout()
+}
+
 const mapBackendCart = (items: BackendCartItem[]): CartItem[] =>
   items.map((item) => ({
     cartItemId: item.id,
@@ -50,8 +69,8 @@ export const useCartStore = create<CartState>((set, get) => ({
   cart: [],
   isLoading: false,
 
-  addToCart: async (item) => {
-    const token = getToken()
+  addToCart: async (item) => {//adds product to cart
+    const token = getToken() //checks if the user is logged in
 
     if (!token) {
       set((state) => {
@@ -83,6 +102,11 @@ export const useCartStore = create<CartState>((set, get) => ({
         quantity: 1,
       }),
     })
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error(await getErrorMessage(response, "Failed to add to cart"))
+        }
+      })
 
     await get().fetchCart()
   },
@@ -114,6 +138,13 @@ export const useCartStore = create<CartState>((set, get) => ({
         quantity: cartItem.quantity + 1,
       }),
     })
+      .then(async (response) => {
+        if (!response.ok) {
+          throw new Error(
+            await getErrorMessage(response, "Failed to update cart item")
+          )
+        }
+      })
 
     await get().fetchCart()
   },
@@ -144,6 +175,13 @@ export const useCartStore = create<CartState>((set, get) => ({
           Authorization: `Bearer ${token}`,
         },
       })
+        .then(async (response) => {
+          if (!response.ok) {
+            throw new Error(
+              await getErrorMessage(response, "Failed to remove cart item")
+            )
+          }
+        })
     } else {
       await fetch(`${API_BASE_URL}/cart/${cartItem.cartItemId}`, {
         method: "PUT",
@@ -155,6 +193,13 @@ export const useCartStore = create<CartState>((set, get) => ({
           quantity: cartItem.quantity - 1,
         }),
       })
+        .then(async (response) => {
+          if (!response.ok) {
+            throw new Error(
+              await getErrorMessage(response, "Failed to update cart item")
+            )
+          }
+        })
     }
 
     await get().fetchCart()
@@ -175,6 +220,12 @@ export const useCartStore = create<CartState>((set, get) => ({
           Authorization: `Bearer ${token}`,
         },
       })
+
+      if (response.status === 401) {
+        handleUnauthorized()
+        set({ cart: [] })
+        return
+      }
 
       if (!response.ok) {
         throw new Error("Failed to fetch cart")
@@ -215,6 +266,13 @@ export const useCartStore = create<CartState>((set, get) => ({
           quantity: item.quantity,
         }),
       })
+        .then(async (response) => {
+          if (!response.ok) {
+            throw new Error(
+              await getErrorMessage(response, "Failed to sync cart")
+            )
+          }
+        })
     }
 
     await get().fetchCart()

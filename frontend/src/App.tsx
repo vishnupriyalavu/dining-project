@@ -48,11 +48,7 @@ function App() {
 
           <Route
             path="/success"
-            element={
-              <ProtectedRoute>
-                <OrderSuccessPage />
-              </ProtectedRoute>
-            }
+            element={<OrderSuccessPage />}
           />
 
           <Route

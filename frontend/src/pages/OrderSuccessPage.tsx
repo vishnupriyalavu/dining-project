@@ -11,6 +11,7 @@ export default function OrderSuccessPage() {
   const [isFinalizing, setIsFinalizing] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const hasStartedRef = useRef(false)
+  const token = localStorage.getItem("token")
 
   useEffect(() => {
     if (hasStartedRef.current) {
@@ -28,7 +29,7 @@ export default function OrderSuccessPage() {
           : "finalized_order_fallback"
 
         if (!token) {
-          throw new Error("Please log in again to view the order status.")
+          throw new Error("Payment was completed, but you need to log in again to sync the order.")
         }
 
         if (sessionStorage.getItem(finalizeKey) === "done") {
@@ -122,7 +123,15 @@ export default function OrderSuccessPage() {
             )}
           </div>
 
-          <div className="mt-8 flex justify-center">
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            {token ? (
+              <Link
+                to="/orders"
+                className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-8 py-3 font-semibold text-slate-900 transition hover:bg-slate-50"
+              >
+                My Orders
+              </Link>
+            ) : null}
             <Link
               to="/"
               className="inline-flex items-center justify-center rounded-full bg-slate-950 px-8 py-3 font-semibold text-white transition hover:bg-slate-800"

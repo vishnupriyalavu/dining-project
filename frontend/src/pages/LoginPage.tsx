@@ -76,7 +76,7 @@ export default function LoginPage() {
                 <p className="text-red-500 text-sm">{errors.email.message}</p>
               )}
             </div>
-
+            
             <div>
               <Label>Password</Label>
               <Input type="password" {...register("password")} />

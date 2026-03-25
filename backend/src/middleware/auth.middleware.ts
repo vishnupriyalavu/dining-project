@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken"
 import { Request, Response, NextFunction } from "express"
+import { JWT_SECRET } from "../config/env"
 
-interface AuthRequest extends Request {
-  userId?: string
+interface AuthRequest extends Request {//we are extending the default Request type to include a userId property, which will be set after successful authentication. This allows us to access the userId in our route handlers without TypeScript errors.
+  userId?: string 
 }
 
 export const authenticate = (
@@ -29,7 +30,7 @@ export const authenticate = (
   try {
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET as string
+      JWT_SECRET
     ) as { userId: string }
 
     req.userId = decoded.userId

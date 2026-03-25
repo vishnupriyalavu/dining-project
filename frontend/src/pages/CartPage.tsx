@@ -26,8 +26,8 @@ export default function CartPage() {
   )
 
   const handleStripeCheckout = async () => {
-    setError(null)
-    setIsCheckingOut(true)
+    setError(null) 
+    setIsCheckingOut(true) //checkout
 
     try {
       const token = localStorage.getItem("token")
