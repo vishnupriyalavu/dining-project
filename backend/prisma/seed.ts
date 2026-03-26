@@ -8,7 +8,8 @@ async function main() {
       name: "Margherita Pizza",
       description: "Classic Italian pizza with tomato sauce, mozzarella cheese, and fresh basil.",
       price: 2500,
-      image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38"
+      image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38",
+      featured: true
     },
     {
       name: "Pepperoni Pizza",
@@ -26,7 +27,8 @@ async function main() {
       name: "Chicken Burger",
       description: "Juicy grilled chicken burger with cheese, lettuce, and special burger sauce.",
       price: 200,
-      image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd"
+      image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd",
+      featured: true
     },
     {
       name: "French Fries",
@@ -56,7 +58,8 @@ async function main() {
       name: "Chicken Biryani",
       description: "Traditional aromatic basmati rice cooked with marinated chicken and spices.",
       price: 300,
-      image: "https://images.unsplash.com/photo-1633945274309-2c16f4d3f1a0"
+      image: "https://images.unsplash.com/photo-1633945274309-2c16f4d3f1a0",
+      featured: true
     },
     {
       name: "Chocolate Cake",

@@ -11,31 +11,47 @@ import profileRoutes from "./routes/profile.routes"
 dotenv.config()
 
 const app = express()
-const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  "http://localhost:5173"
-].filter(Boolean) as string[]
+const normalizeOrigin = (origin: string) => origin.replace(/\/$/, "")
 
-// Middleware
-app.use(cors({
+const allowedOrigins = Array.from(
+  new Set(
+    [
+      process.env.FRONTEND_URLS,
+      process.env.FRONTEND_URL,
+      "http://localhost:5173",
+      "https://dining-project.vercel.app"
+    ]
+      .flatMap((value) => (value || "").split(","))
+      .map((origin) => origin.trim())
+      .filter(Boolean)
+      .map(normalizeOrigin)
+  )
+)
+
+const corsOptions: cors.CorsOptions = {
   origin: (origin, callback) => {
     if (!origin) {
       callback(null, true)
       return
     }
 
-    const isAllowedLocalhost = /^http:\/\/localhost:\d+$/.test(origin)
-    const isAllowedOrigin = allowedOrigins.includes(origin)
+    const normalizedOrigin = normalizeOrigin(origin)
+    const isAllowedLocalhost = /^http:\/\/localhost:\d+$/.test(normalizedOrigin)
+    const isAllowedOrigin = allowedOrigins.includes(normalizedOrigin)
 
     if (isAllowedLocalhost || isAllowedOrigin) {
       callback(null, true)
       return
     }
 
-    callback(new Error("CORS origin not allowed"))
+    callback(new Error(`CORS origin not allowed: ${origin}`))
   },
   credentials: true
-}))
+}
+
+// Middleware
+app.use(cors(corsOptions))
+app.options("*", cors(corsOptions))
 app.use(express.json())
 
 // Routes
